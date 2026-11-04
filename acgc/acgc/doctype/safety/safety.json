@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-06-22 10:57:27.973025",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "injuiry_recorded",
+  "column_break_mrpt",
+  "count"
+ ],
+ "fields": [
+  {
+   "fieldname": "injuiry_recorded",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Injury Recorded"
+  },
+  {
+   "fieldname": "column_break_mrpt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "count",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Count"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-25 10:56:19.464904",
+ "modified_by": "Administrator",
+ "module": "ACGC",
+ "name": "Safety",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

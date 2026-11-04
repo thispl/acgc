@@ -1,0 +1,130 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-06-10 11:57:03.768000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "resident_name",
+  "room_number",
+  "employees_responsiveness",
+  "rate_desk_employee",
+  "room_service_employees",
+  "employees_professionalism",
+  "service_quality",
+  "column_break_qbyq",
+  "cleanliness_of_the_room",
+  "technical_service_quality",
+  "taste_of_the_food",
+  "service",
+  "food_quality",
+  "restaurant_employees_service_quality",
+  "laundry_service_quality"
+ ],
+ "fields": [
+  {
+   "fieldname": "resident_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Resident Name"
+  },
+  {
+   "fieldname": "room_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Room Number"
+  },
+  {
+   "fieldname": "column_break_qbyq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "taste_of_the_food",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Taste of the food"
+  },
+  {
+   "fieldname": "service",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Service"
+  },
+  {
+   "fieldname": "food_quality",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Food quality"
+  },
+  {
+   "fieldname": "restaurant_employees_service_quality",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Restaurant employees service quality"
+  },
+  {
+   "fieldname": "laundry_service_quality",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Laundry Service Quality"
+  },
+  {
+   "fieldname": "employees_responsiveness",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "How do you rate our employees responsiveness with you"
+  },
+  {
+   "fieldname": "rate_desk_employee",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "How do you rate front desk employee"
+  },
+  {
+   "fieldname": "room_service_employees",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "How do you rate room service employees"
+  },
+  {
+   "fieldname": "employees_professionalism",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "How do you rate our employees professionalism with you"
+  },
+  {
+   "fieldname": "service_quality",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "How do you rate service quality"
+  },
+  {
+   "fieldname": "cleanliness_of_the_room",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "How do you rate the cleanliness of the room"
+  },
+  {
+   "fieldname": "technical_service_quality",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "How do you rate the Technical Service Quality"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-10 12:03:21.250965",
+ "modified_by": "Administrator",
+ "module": "ACGC",
+ "name": "Customer Satisfaction Survey",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

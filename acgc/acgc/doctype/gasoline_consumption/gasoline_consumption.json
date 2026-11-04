@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-06-22 10:58:59.880847",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "gasoline_91",
+  "diesel",
+  "column_break_haon",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Date"
+  },
+  {
+   "fieldname": "gasoline_91",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "GASOLINE 91"
+  },
+  {
+   "fieldname": "diesel",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Diesel"
+  },
+  {
+   "fieldname": "column_break_haon",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Remarks"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-22 10:58:59.880847",
+ "modified_by": "Administrator",
+ "module": "ACGC",
+ "name": "Gasoline Consumption",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

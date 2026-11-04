@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-06-22 11:01:14.166342",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "training_on",
+  "planned",
+  "column_break_iygx",
+  "conducted",
+  "achieved_"
+ ],
+ "fields": [
+  {
+   "fieldname": "training_on",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Training On"
+  },
+  {
+   "fieldname": "planned",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Planned"
+  },
+  {
+   "fieldname": "column_break_iygx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "conducted",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Conducted"
+  },
+  {
+   "fieldname": "achieved_",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Achieved %"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-22 11:01:14.166342",
+ "modified_by": "Administrator",
+ "module": "ACGC",
+ "name": "Training On",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

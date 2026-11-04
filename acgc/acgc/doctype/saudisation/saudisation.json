@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-06-22 10:57:14.084619",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "functions",
+  "column_break_tqfo",
+  "total",
+  "column_break_ksxb",
+  "saudi_nationals"
+ ],
+ "fields": [
+  {
+   "fieldname": "functions",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Functions"
+  },
+  {
+   "fieldname": "column_break_tqfo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Total"
+  },
+  {
+   "fieldname": "column_break_ksxb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "saudi_nationals",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Saudi Nationals"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-22 10:57:14.084619",
+ "modified_by": "Administrator",
+ "module": "ACGC",
+ "name": "SAUDISATION",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

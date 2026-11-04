@@ -1,0 +1,496 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:MPD-{YYYY}-{MM}-{####}",
+ "creation": "2026-06-22 11:03:19.167328",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "site",
+  "organization_chart",
+  "column_break_gkcq",
+  "posting_date",
+  "section_break_kxls",
+  "resident_satisfaction_survey",
+  "section_break_skvm",
+  "customer_satisfaction_survey",
+  "section_break_buhv",
+  "catering_and_laundry_services",
+  "meal_and_laundry_count_section",
+  "breakfast",
+  "column_break_pzxz",
+  "lunch",
+  "column_break_ccxs",
+  "dinner",
+  "column_break_pglh",
+  "laundry",
+  "section_break_ghzu",
+  "occupancy_report",
+  "total_rooms_occupancy_wise",
+  "total_occupied_rooms",
+  "total_vacant_rooms",
+  "total_occupancy_percentage",
+  "occupancy_category_report",
+  "total_rooms_category_wise",
+  "total_occupied_rooms_category_wise",
+  "total_vacant_rooms_category_wise",
+  "total_occupancy_percentage_category_wise",
+  "details__2_tab",
+  "section_2",
+  "pm",
+  "cm",
+  "wr",
+  "month_summary",
+  "overall_summary",
+  "section_break_xboo",
+  "total_activities",
+  "details_3_tab",
+  "manpower_section",
+  "manpower_summary",
+  "manpower_detailed",
+  "section_break_owbt",
+  "saudisation",
+  "total_manpower",
+  "total_saudi_nationals",
+  "section_break_oxkm",
+  "safety",
+  "section_break_evyi",
+  "energy_management",
+  "total",
+  "section_break_xdem",
+  "water_consumption",
+  "total_water_consumption",
+  "section_break_lgpa",
+  "sewage_water_and_garbage",
+  "total_sewage_water",
+  "total_garbage_collection",
+  "section_break_glzc",
+  "gasoline_consumption",
+  "total_gasoline",
+  "total_diesel",
+  "details_4_tab",
+  "safety_and_environment_checklist_section",
+  "safety_and_environment_checklist",
+  "overall_applicable",
+  "overall_actual",
+  "overall_rating",
+  "section_break_gztr",
+  "training_on",
+  "section_break_mdnj",
+  "kpi_title"
+ ],
+ "fields": [
+  {
+   "fieldname": "site",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Site",
+   "options": "Site"
+  },
+  {
+   "fieldname": "column_break_gkcq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "section_break_kxls",
+   "fieldtype": "Section Break",
+   "label": "Resident Satisfaction Survey"
+  },
+  {
+   "fieldname": "resident_satisfaction_survey",
+   "fieldtype": "Table",
+   "options": "Resident Satisfaction Survey"
+  },
+  {
+   "fieldname": "section_break_skvm",
+   "fieldtype": "Section Break",
+   "label": "Customer Satisfaction Survey"
+  },
+  {
+   "fieldname": "customer_satisfaction_survey",
+   "fieldtype": "Table",
+   "options": "Customer Satisfaction Survey"
+  },
+  {
+   "fieldname": "section_break_buhv",
+   "fieldtype": "Section Break",
+   "label": "Catering and Laundry Services"
+  },
+  {
+   "fieldname": "catering_and_laundry_services",
+   "fieldtype": "Table",
+   "options": "Catering and Laundry Services"
+  },
+  {
+   "fieldname": "meal_and_laundry_count_section",
+   "fieldtype": "Section Break",
+   "label": "Meal & Laundry Count"
+  },
+  {
+   "fieldname": "breakfast",
+   "fieldtype": "Data",
+   "label": "Breakfast"
+  },
+  {
+   "fieldname": "column_break_pzxz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lunch",
+   "fieldtype": "Data",
+   "label": "Lunch"
+  },
+  {
+   "fieldname": "column_break_ccxs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "dinner",
+   "fieldtype": "Data",
+   "label": "Dinner"
+  },
+  {
+   "fieldname": "column_break_pglh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "laundry",
+   "fieldtype": "Data",
+   "label": "Laundry "
+  },
+  {
+   "fieldname": "section_break_ghzu",
+   "fieldtype": "Section Break",
+   "label": "Occupancy Category Report"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "occupancy_report",
+   "fieldtype": "Table",
+   "label": "Occupancy Report",
+   "options": "Occupancy Report"
+  },
+  {
+   "fieldname": "total_rooms_occupancy_wise",
+   "fieldtype": "Data",
+   "label": "Total Rooms"
+  },
+  {
+   "fieldname": "total_occupied_rooms",
+   "fieldtype": "Data",
+   "label": "Total Occupied Rooms"
+  },
+  {
+   "fieldname": "total_vacant_rooms",
+   "fieldtype": "Data",
+   "label": "Total Vacant Rooms"
+  },
+  {
+   "fieldname": "total_occupancy_percentage",
+   "fieldtype": "Data",
+   "label": "Total Occupancy %"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "occupancy_category_report",
+   "fieldtype": "Table",
+   "options": "Occupancy Category Report"
+  },
+  {
+   "fieldname": "total_rooms_category_wise",
+   "fieldtype": "Data",
+   "label": "Total Rooms"
+  },
+  {
+   "fieldname": "total_occupied_rooms_category_wise",
+   "fieldtype": "Data",
+   "label": "Total Occupied Rooms"
+  },
+  {
+   "fieldname": "total_vacant_rooms_category_wise",
+   "fieldtype": "Data",
+   "label": "Total Vacant Rooms"
+  },
+  {
+   "fieldname": "total_occupancy_percentage_category_wise",
+   "fieldtype": "Data",
+   "label": "Total Occupancy %"
+  },
+  {
+   "fieldname": "details__2_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details  2"
+  },
+  {
+   "fieldname": "section_2",
+   "fieldtype": "Section Break",
+   "label": "PM-CM-WR"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "pm",
+   "fieldtype": "Table",
+   "label": "PM",
+   "options": "PMI Data"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "cm",
+   "fieldtype": "Table",
+   "label": "CM",
+   "options": "CM"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "wr",
+   "fieldtype": "Table",
+   "label": "WR",
+   "options": "CM"
+  },
+  {
+   "fieldname": "month_summary",
+   "fieldtype": "Table",
+   "label": "Month Summary",
+   "options": "PM-CM-WR Month Details"
+  },
+  {
+   "fieldname": "overall_summary",
+   "fieldtype": "Table",
+   "label": "Overall Summary",
+   "options": "PM-CM-WR Summary"
+  },
+  {
+   "fieldname": "section_break_xboo",
+   "fieldtype": "Section Break",
+   "label": "Total Activities"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "total_activities",
+   "fieldtype": "Table",
+   "options": "Total Activities"
+  },
+  {
+   "fieldname": "details_3_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details 3"
+  },
+  {
+   "fieldname": "manpower_section",
+   "fieldtype": "Section Break",
+   "label": "Manpower"
+  },
+  {
+   "fieldname": "manpower_summary",
+   "fieldtype": "Table",
+   "label": "Manpower Summary",
+   "options": "Manpower Summary"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "manpower_detailed",
+   "fieldtype": "Table",
+   "label": "Manpower Detailed",
+   "options": "Manpower Summary"
+  },
+  {
+   "fieldname": "section_break_owbt",
+   "fieldtype": "Section Break",
+   "label": "SAUDISATION"
+  },
+  {
+   "fieldname": "saudisation",
+   "fieldtype": "Table",
+   "options": "SAUDISATION"
+  },
+  {
+   "fieldname": "total_manpower",
+   "fieldtype": "Data",
+   "label": "Total Manpower"
+  },
+  {
+   "fieldname": "total_saudi_nationals",
+   "fieldtype": "Data",
+   "label": "Total Saudi Nationals"
+  },
+  {
+   "fieldname": "section_break_oxkm",
+   "fieldtype": "Section Break",
+   "label": "Safety"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "safety",
+   "fieldtype": "Table",
+   "options": "Safety"
+  },
+  {
+   "fieldname": "section_break_evyi",
+   "fieldtype": "Section Break",
+   "label": "Energy Management"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "energy_management",
+   "fieldtype": "Table",
+   "options": "Energy Management"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Data",
+   "label": "Total"
+  },
+  {
+   "fieldname": "section_break_xdem",
+   "fieldtype": "Section Break",
+   "label": "Water Consumption"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "water_consumption",
+   "fieldtype": "Table",
+   "options": "Water Consumption"
+  },
+  {
+   "fieldname": "total_water_consumption",
+   "fieldtype": "Data",
+   "label": "Total Water Consumption"
+  },
+  {
+   "fieldname": "section_break_lgpa",
+   "fieldtype": "Section Break",
+   "label": "Sewage water and Garbage"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "sewage_water_and_garbage",
+   "fieldtype": "Table",
+   "options": "Sewage water and Garbage"
+  },
+  {
+   "fieldname": "total_sewage_water",
+   "fieldtype": "Data",
+   "label": "Total Sewage Water"
+  },
+  {
+   "fieldname": "total_garbage_collection",
+   "fieldtype": "Data",
+   "label": "Total Garbage Collection"
+  },
+  {
+   "fieldname": "section_break_glzc",
+   "fieldtype": "Section Break",
+   "label": "Gasoline Consumption"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "gasoline_consumption",
+   "fieldtype": "Table",
+   "options": "Gasoline Consumption"
+  },
+  {
+   "fieldname": "total_gasoline",
+   "fieldtype": "Data",
+   "label": "Total Gasoline"
+  },
+  {
+   "fieldname": "total_diesel",
+   "fieldtype": "Data",
+   "label": "Total Diesel"
+  },
+  {
+   "fieldname": "details_4_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details 4"
+  },
+  {
+   "fieldname": "safety_and_environment_checklist_section",
+   "fieldtype": "Section Break",
+   "label": "Safety and Environment Checklist"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "safety_and_environment_checklist",
+   "fieldtype": "Table",
+   "options": "Safety and Environment Checklist"
+  },
+  {
+   "fieldname": "overall_applicable",
+   "fieldtype": "Data",
+   "label": "Overall Applicable"
+  },
+  {
+   "fieldname": "overall_actual",
+   "fieldtype": "Data",
+   "label": "Overall Actual"
+  },
+  {
+   "fieldname": "overall_rating",
+   "fieldtype": "Data",
+   "label": "Overall Rating"
+  },
+  {
+   "fieldname": "section_break_gztr",
+   "fieldtype": "Section Break",
+   "label": "Training On"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "training_on",
+   "fieldtype": "Table",
+   "options": "Training On"
+  },
+  {
+   "fieldname": "section_break_mdnj",
+   "fieldtype": "Section Break",
+   "label": "KPI Title"
+  },
+  {
+   "fieldname": "kpi_title",
+   "fieldtype": "Table",
+   "options": "KPI Title"
+  },
+  {
+   "fieldname": "organization_chart",
+   "fieldtype": "Attach",
+   "label": "Organisation Chart"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-29 18:18:00.647999",
+ "modified_by": "sivarenisha.m@groupteampro.com",
+ "module": "ACGC",
+ "name": "Monthly Progress Data",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-06-22 10:53:27.189000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "building_number",
+  "total_rooms",
+  "occupied_rooms",
+  "column_break_ival",
+  "vacant_rooms",
+  "occupancy_",
+  "type_of_building"
+ ],
+ "fields": [
+  {
+   "fieldname": "building_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Building Number"
+  },
+  {
+   "fieldname": "total_rooms",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Total Rooms"
+  },
+  {
+   "fieldname": "occupied_rooms",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Occupied Rooms"
+  },
+  {
+   "fieldname": "column_break_ival",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "vacant_rooms",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Vacant Rooms"
+  },
+  {
+   "fieldname": "occupancy_",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Occupancy %"
+  },
+  {
+   "fieldname": "type_of_building",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Type of Building"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-22 10:53:27.189000",
+ "modified_by": "Administrator",
+ "module": "ACGC",
+ "name": "Occupancy Report",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
