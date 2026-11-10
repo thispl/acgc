@@ -209,6 +209,11 @@ def import_monthly_progress(upload_doc):
         water_df.columns = water_df.columns.str.strip()
         doc.set("water_consumption", [])
 
+        # case-insensitive column lookup (handles "RAW  Water", "Raw Water", "raw water" etc.)
+        col_map = {re.sub(r"\s+"," ",str(c)).strip().lower(): c for c in water_df.columns}
+        raw_col = col_map.get("raw water")
+        sweet_col = col_map.get("sweet water for ps & rc") or col_map.get("sweet water")
+
         for _, row in water_df.iterrows():
             if pd.isna(row.get("DATE")):
                 continue
@@ -218,8 +223,8 @@ def import_monthly_progress(upload_doc):
             except Exception:
                 continue 
 
-            raw_water_val = row.get("Raw Water", 0)
-            sweet_water_val = row.get("Sweet Water", 0)
+            raw_water_val = row.get(raw_col, 0) if raw_col else 0
+            sweet_water_val = row.get(sweet_col, 0) if sweet_col else 0
 
             raw_water = 0 if pd.isna(raw_water_val) else round(float(raw_water_val),2)
             sweet_water = 0 if pd.isna(sweet_water_val) else round(float(sweet_water_val),2)
@@ -581,12 +586,51 @@ def import_monthly_progress(upload_doc):
             if first_col == "BUILDING NO":
                 building_header = idx
 
-            elif first_col == "Category":
+            elif first_col == "Category" and category_header is None:
                 category_header = idx
 
-        if building_header is not None and category_header is not None:
+        def num(row, i, pct=False):
+            if i is None or pd.isna(row[i]):
+                return 0
+            try:
+                v = float(row[i])
+            except (ValueError, TypeError):
+                return 0
+            return v * 100 if pct else v
 
-            building_df = occ_df.iloc[building_header + 1 : category_header]
+        header_words = {"BUILDING NO", "CATEGORY", "OCCUPANCY REPORT"}
+
+        def table_end(start):
+            for idx in range(start, len(occ_df)):
+                c0 = occ_df.iloc[idx, 0]
+                c0 = "" if pd.isna(c0) else str(c0).strip().upper()
+                if c0 == "TOTAL":
+                    return idx + 1
+                if c0 in header_words:
+                    return idx
+            return len(occ_df)
+
+        if building_header is not None:
+
+            headers = (
+                occ_df.iloc[building_header]
+                .fillna("")
+                .astype(str)
+                .str.upper()
+                .str.strip()
+            )
+
+            def bcol(*keys):
+                matches = [i for i, h in headers.items() if any(k in h for k in keys)]
+                return matches[-1] if matches else None
+
+            total_col = bcol("TOTAL")
+            occupied_col = bcol("OCCUPIED")
+            vacant_col = bcol("VACANT")
+            occupancy_col = bcol("OCCUPANCY")
+            type_col = bcol("TYPE OF BUILDING")
+
+            building_df = occ_df.iloc[building_header + 1 : table_end(building_header + 1)]
 
             for _, row in building_df.iterrows():
 
@@ -597,38 +641,44 @@ def import_monthly_progress(upload_doc):
 
                 if str(building_number).strip().upper() == "TOTAL":
 
-                    doc.total_rooms_occupancy_wise = round(
-                        0 if pd.isna(row[1]) else float(row[1]),
-                        2
-                    )
+                    doc.total_rooms_occupancy_wise = round(num(row, total_col), 2)
 
-                    doc.total_occupied_rooms = round(
-                        0 if pd.isna(row[2]) else float(row[2]),
-                        2
-                    )
+                    doc.total_occupied_rooms = round(num(row, occupied_col), 2)
 
-                    doc.total_vacant_rooms = round(
-                        0 if pd.isna(row[3]) else float(row[3]),
-                        2
-                    )
+                    doc.total_vacant_rooms = round(num(row, vacant_col), 2)
 
-                    doc.total_occupancy_percentage = round(
-                        0 if pd.isna(row[4]) else float(row[4]) * 100,
-                        2
-                    )
+                    doc.total_occupancy_percentage = round(num(row, occupancy_col, pct=True), 2)
+
                     continue
 
                 doc.append("occupancy_report", {
                     "building_number": str(building_number).strip(),
-                    "total_rooms": 0 if pd.isna(row[1]) else float(row[1]),
-                    "occupied_rooms": 0 if pd.isna(row[2]) else float(row[2]),
-                    "vacant_rooms": 0 if pd.isna(row[3]) else float(row[3]),
-                    "occupancy_": 0 if pd.isna(row[4]) else float(row[4]) * 100,
-                    "type_of_building": "" if pd.isna(row[5]) else str(row[5]).strip()
+                    "total_rooms": num(row, total_col),
+                    "occupied_rooms": num(row, occupied_col),
+                    "vacant_rooms": num(row, vacant_col),
+                    "occupancy_": num(row, occupancy_col, pct=True),
+                    "type_of_building": "" if type_col is None or pd.isna(row[type_col]) else str(row[type_col]).strip()
                 })
         if category_header is not None:
 
-            category_df = occ_df.iloc[category_header + 1 :]
+            cat_headers = (
+                occ_df.iloc[category_header]
+                .fillna("")
+                .astype(str)
+                .str.upper()
+                .str.strip()
+            )
+
+            def ccol(*keys):
+                matches = [i for i, h in cat_headers.items() if any(k in h for k in keys)]
+                return matches[0] if matches else None
+
+            c_total = ccol("TOTAL")
+            c_occupied = ccol("OCCUPIED")
+            c_vacant = ccol("VACANT")
+            c_occupancy = ccol("OCCUPANCY")
+
+            category_df = occ_df.iloc[category_header + 1 : table_end(category_header + 1)]
 
             for _, row in category_df.iterrows():
 
@@ -639,33 +689,21 @@ def import_monthly_progress(upload_doc):
 
                 if str(category).strip().upper() == "TOTAL":
 
-                    doc.total_rooms_category_wise = round(
-                    0 if pd.isna(row[1]) else float(row[1]),
-                        2
-                    )
+                    doc.total_rooms_category_wise = round(num(row, c_total), 2)
 
-                    doc.total_occupied_rooms_category_wise = round(
-                        0 if pd.isna(row[2]) else float(row[2]),
-                        2
-                    )
+                    doc.total_occupied_rooms_category_wise = round(num(row, c_occupied), 2)
 
-                    doc.total_vacant_rooms_category_wise = round(
-                        0 if pd.isna(row[3]) else float(row[3]),
-                        2
-                    )
+                    doc.total_vacant_rooms_category_wise = round(num(row, c_vacant), 2)
 
-                    doc.total_occupancy_percentage_category_wise = round(
-                        0 if pd.isna(row[4]) else float(row[4]) * 100,
-                        2
-                    )
+                    doc.total_occupancy_percentage_category_wise = round(num(row, c_occupancy, pct=True), 2)
 
                     continue
                 doc.append("occupancy_category_report", {
                     "category": str(category).strip(),
-                    "total_rooms": 0 if pd.isna(row[1]) else float(row[1]),
-                    "occupied_rooms": 0 if pd.isna(row[2]) else float(row[2]),
-                    "vacant_rooms": 0 if pd.isna(row[3]) else float(row[3]),
-                    "occupancy_": 0 if pd.isna(row[4]) else float(row[4]) * 100
+                    "total_rooms": num(row, c_total),
+                    "occupied_rooms": num(row, c_occupied),
+                    "vacant_rooms": num(row, c_vacant),
+                    "occupancy_": num(row, c_occupancy, pct=True)
                 })
 
     except Exception as e:
@@ -685,6 +723,7 @@ def import_monthly_progress(upload_doc):
         overall_pm_idx = None
         overall_cm_idx = None
         overall_wr_idx = None
+        overall_idx = None
         overall_summary_idx = None
         for idx, row in pm_df.iterrows():
 
@@ -694,13 +733,13 @@ def import_monthly_progress(upload_doc):
                 else ""
             )
 
-            if first_col.upper() == "PMI":
+            if first_col.upper() == "PMI" and pmi_idx is None:
                 pmi_idx = idx
 
-            elif first_col.upper() == "CM":
+            elif first_col.upper() == "CM" and cm_idx is None:
                 cm_idx = idx
 
-            elif first_col.upper() == "WR":
+            elif first_col.upper() == "WR" and wr_idx is None:
                 wr_idx = idx
 
             elif first_col.upper() == "OVERALL PM":
@@ -711,6 +750,9 @@ def import_monthly_progress(upload_doc):
 
             elif first_col.upper() == "OVERALL WR":
                 overall_wr_idx = idx
+
+            elif first_col.upper() == "OVERALL":
+                overall_idx = idx
 
             values = [
                 str(v).strip().upper()
@@ -765,9 +807,10 @@ def import_monthly_progress(upload_doc):
                     "accomplished": 0 if pd.isna(row[2]) else float(row[2]),
                     "outstanding": 0 if pd.isna(row[3]) else round(float(row[3]) * 100, 2)
                 })
-        if wr_idx is not None and overall_pm_idx is not None:
+        wr_end = overall_pm_idx if overall_pm_idx is not None else overall_idx
+        if wr_idx is not None and wr_end is not None:
 
-            wr_data = pm_df.iloc[wr_idx + 2:overall_pm_idx]
+            wr_data = pm_df.iloc[wr_idx + 2:wr_end]
 
             for _, row in wr_data.iterrows():
 
@@ -896,3 +939,290 @@ def import_monthly_progress(upload_doc):
         "status": "success",
         "monthly_progress_data": doc.name
     }
+
+
+@frappe.whitelist()
+def get_template():
+    from io import BytesIO
+
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+    from openpyxl.utils import get_column_letter
+
+    title_font = Font(bold=True, size=12)
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill("solid", fgColor="4472C4")
+    header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    thin_side = Side(style="thin", color="7F7F7F")
+    header_border = Border(left=thin_side, right=thin_side, top=thin_side, bottom=thin_side)
+    label_font = Font(bold=True)
+    label_fill = PatternFill("solid", fgColor="D9E1F2")
+
+    wb = Workbook()
+    wb.remove(wb.active)
+
+    def make_sheet(name):
+        return wb.create_sheet(title=name)
+
+    def autofit(ws, row, headers, start_col=1):
+        lines = 1
+        for i, h in enumerate(headers):
+            if not h:
+                continue
+            width = min(max(12, len(str(h)) + 4), 40)
+            col = get_column_letter(start_col + i)
+            ws.column_dimensions[col].width = max(
+                ws.column_dimensions[col].width or 0, width
+            )
+            lines = max(lines, -(-len(str(h)) // max(int(width * 0.9), 1)))
+        ws.row_dimensions[row].height = max(20, 16 * lines + 6)
+
+    def put_title(ws, row, text, col=1):
+        ws.cell(row=row, column=col, value=text).font = title_font
+        letter = get_column_letter(col)
+        ws.column_dimensions[letter].width = max(
+            ws.column_dimensions[letter].width or 0, min(len(str(text)) + 4, 45)
+        )
+
+    def put_note(ws, coord, text):
+        c = ws[coord]
+        c.value = text
+        c.font = Font(italic=True, size=10, color="808080")
+        c.alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+        ws.row_dimensions[c.row].height = max(
+            ws.row_dimensions[c.row].height or 0, 20
+        )
+
+    def put_header(ws, row, headers, start_col=1):
+        for i, h in enumerate(headers):
+            c = ws.cell(row=row, column=start_col + i, value=h)
+            c.font = header_font
+            c.fill = header_fill
+            c.alignment = header_alignment
+            c.border = header_border
+        autofit(ws, row, headers, start_col)
+
+    def put_label(ws, row, text):
+        c = ws.cell(row=row, column=1, value=text)
+        c.font = label_font
+        c.fill = label_fill
+        ws.column_dimensions["A"].width = max(
+            ws.column_dimensions["A"].width or 0, len(text) + 4
+        )
+
+    # Resident Satisfaction Survey
+    ws = make_sheet("Resident Satisfaction Survey")
+    put_title(ws, 1, "Resident Satisfaction Survey")
+    put_note(ws, "B1", "Chart proposed: Feedback - Weekwise / Average Feedback Achieved")
+    ws.merge_cells("B1:H1")
+    put_header(ws, 2, ["Attribute", "Week 1", "Week 2", "Week 3", "Week 4"])
+
+    # Customer Satisfaction Survey
+    ws = make_sheet("Customer Satisfaction Survey")
+    put_title(ws, 1, "Customer Satisfaction Survey")
+    put_note(ws, "C1", "chart proposed: Testimonials from random rooms")
+    ws.merge_cells("C1:E1")
+    put_header(ws, 2, [
+        "Resident Name",
+        "Room Number",
+        "How do you rate our employees responsiveness with you",
+        "How do you rate front desk employee",
+        "How do you rate room service employees",
+        "How do you rate our employees professionalism with you",
+        "How do you rate service quality",
+        "How do you rate the cleanliness of the room",
+        "How do you rate the Technical Service Quality",
+        "Taste of the food",
+        "Service",
+        "Food quality",
+        "Restaurant employees service quality",
+        "Laundry Service Quality",
+    ])
+
+    # Catering and Laundry Services
+    ws = make_sheet("Catering and Laundry Services")
+    put_title(ws, 1, "Catering and Laundry Services")
+    put_note(ws, "B1", "Chart proposed: Feedback - Weekwise / Total Meal served - count summary / Mealwise Breakup / Laundry count")
+    ws.merge_cells("B1:H1")
+    put_header(ws, 2, ["Attribute", "Week 1", "Week 2", "Week 3", "Week 4"])
+    put_header(ws, 11, ["Meal", "Count"])
+    put_label(ws, 12, "Breakfast")
+    put_label(ws, 13, "Lunch")
+    put_label(ws, 14, "Dinner")
+    put_label(ws, 16, "Laundry")
+
+    # Occupancy Report
+    ws = make_sheet("Occupancy Report")
+    put_title(ws, 1, "Occupancy Report")
+    put_note(ws, "C1", "chart proposed: Total Room vs Occupied / Building wise Occupancy / categorywise Occupancy")
+    ws.merge_cells("C1:F1")
+    put_header(ws, 2, [
+        "BUILDING NO",
+        "TOTAL ROOMS",
+        "OCCUPIED ROOMS",
+        "VACANT ROOMS",
+        "OCCUPANCY %",
+        "Type of Building",
+    ])
+    put_label(ws, 8, "TOTAL")
+    put_header(ws, 10, [
+        "Category",
+        "Total Rooms",
+        "Occupied Rooms",
+        "Vacant Rooms",
+        "Occupancy %",
+    ])
+    put_label(ws, 16, "TOTAL")
+
+    # PM-CM-WR
+    ws = make_sheet("PM-CM-WR")
+    put_label(ws, 1, "PMI")
+    put_note(ws, "C1", "chart proposed: Overall Scheduled vs Accomplished / Subjectwise comparison")
+    ws.merge_cells("C1:E1")
+    put_header(ws, 2, ["Subject", "Planned", "Completed", "Outstanding"])
+    put_label(ws, 11, "Total PMI")
+    put_label(ws, 12, "Scheduled")
+    put_label(ws, 13, "Accomplished")
+    put_label(ws, 14, "Completion Rate")
+    put_label(ws, 16, "CM")
+    put_note(ws, "C16", "chart proposed: Overall Scheduled vs Accomplished / Subjectwise comparison")
+    ws.merge_cells("C16:E16")
+    put_header(ws, 17, ["Subject", "Scheduled", "Accomplished", "%"])
+    put_label(ws, 24, "Total")
+    put_label(ws, 25, "Scheduled")
+    put_label(ws, 26, "Accomplished")
+    put_label(ws, 27, "Completion Rate")
+    put_label(ws, 29, "WR")
+    put_note(ws, "C29", "chart proposed: Overall Scheduled vs Accomplished / Subjectwise comparison")
+    ws.merge_cells("C29:E29")
+    put_header(ws, 30, ["Subject", "Scheduled", "Accomplished", "[%]"])
+    put_label(ws, 37, "Total")
+    put_label(ws, 38, "Scheduled")
+    put_label(ws, 39, "Accomplished")
+    put_label(ws, 40, "Completion Rate")
+    put_label(ws, 42, "Overall PM")
+    put_note(ws, "C42", "chart proposed:  Monthwise for PMI / CM / WR and summary of all the 3")
+    ws.merge_cells("C42:E42")
+    put_header(ws, 43, ["Month", "Scheduled", "Accomplished", "Outstanding"])
+    put_label(ws, 50, "Overall CM")
+    put_note(ws, "B50", "chart proposed:  Monthwise for PMI / CM / WR and summary of all the 3")
+    ws.merge_cells("B50:E50")
+    put_header(ws, 51, ["Month", "Scheduled", "Accomplished", "Outstanding"])
+    put_label(ws, 58, "Overall WR")
+    put_note(ws, "B58", "chart proposed:  Monthwise for PMI / CM / WR and summary of all the 3")
+    ws.merge_cells("B58:E58")
+    put_header(ws, 59, ["Month", "Scheduled", "Accomplished", "Outstanding"])
+    put_header(ws, 66, ["Month", "PM", "CM", "WR"])
+
+    # Total Activites (sheet name kept as-is: importer looks up this exact name)
+    ws = make_sheet("Total Activites")
+    put_label(ws, 1, "Total Activities Done")
+
+    # Manpower
+    ws = make_sheet("Manpower")
+    put_label(ws, 1, "Manpower Summary")
+    put_note(ws, "C1", "chart proposed: Functionwise Summary and Positionwise")
+    ws.merge_cells("C1:E1")
+    put_header(ws, 2, ["FUNCTION", "Indicative", "Actual"])
+    put_label(ws, 13, "Manpower Detailed")
+    put_header(ws, 14, ["FUNCTION", "Indicative", "Actual"])
+
+    # SAUDISATION
+    ws = make_sheet("SAUDISATION")
+    put_title(ws, 1, "SAUDISATION")
+    put_header(ws, 2, ["Functions", "Total", "Saudi Nationals"])
+
+    # Safety
+    ws = make_sheet("Safety")
+    put_title(ws, 1, "SAFETY")
+    put_note(ws, "B1", "chart proposed: Summary  / Casewise")
+    ws.merge_cells("B1:C1")
+    put_header(ws, 2, ["Injuiry Recorded", "Count"])
+
+    # Energy Management
+    ws = make_sheet("Energy Management")
+    put_title(ws, 1, "Energy Management")
+    put_note(ws, "B1", "chart proposed: Daywise / Overall Consumption")
+    put_title(ws, 2, "Daywise Electricity Consumption")
+    ws.merge_cells("A2:B2")
+    put_header(ws, 3, ["DATE", "Unit Consumed"])
+
+    # Water Consumption (single table: importer reads the first table only)
+    ws = make_sheet("Water Consumption")
+    put_title(ws, 1, "Water Consumption")
+    ws.merge_cells("A1:B1")
+    put_header(ws, 2, ["DATE", "RAW  Water", "Sweet Water"])
+
+    # Sewage water & Garbage  (sheet name kept as-is: trailing space required by importer)
+    ws = make_sheet("Sewage water & Garbage ")
+    put_header(ws, 1, ["DATE", "Sewage Water", "Garbage Collection"])
+    put_header(ws, 2, ["", "Consumption(Litres)", "Capacity"])
+    ws.merge_cells("A1:A2")
+
+    # Gasoline Consumption
+    ws = make_sheet("Gasoline Consumption")
+    put_title(ws, 1, "Gasoline Consumption")
+    ws.merge_cells("A1:C1")
+    put_header(ws, 2, ["DATE", "GASOLINE 91", "Diesel"])
+
+    # Safety & Environment Checklist
+    ws = make_sheet("Safety & Environment Checklist")
+    put_title(ws, 1, "Safety & Environment Checklist")
+    for col, text in [
+        (1, "SUMMARY OF SCORES AND PERCENTAGE"),
+        (2, "WEIGHTED SCORE"),
+        (4, "SATISFACTORY RATING"),
+    ]:
+        c = ws.cell(row=2, column=col, value=text)
+        c.font = header_font
+        c.fill = header_fill
+        c.alignment = header_alignment
+        c.border = header_border
+    autofit(ws, 2, ["SUMMARY OF SCORES AND PERCENTAGE", "WEIGHTED SCORE", "", "SATISFACTORY RATING"])
+    for col, text in [(2, "APPLICABLE"), (3, "ACTUAL")]:
+        c = ws.cell(row=3, column=col, value=text)
+        c.font = header_font
+        c.fill = header_fill
+        c.alignment = header_alignment
+        c.border = header_border
+    ws.row_dimensions[3].height = 22
+    # same merged header layout as the original workbook
+    ws.merge_cells("A2:A3")
+    ws.merge_cells("B2:C2")
+    ws.merge_cells("D2:D3")
+
+    # Training On
+    ws = make_sheet("Training On")
+    put_title(ws, 1, "Training On")
+    ws.merge_cells("A1:D1")
+    put_header(ws, 2, ["Training On", "Planned", "Conducted", "Achieved %"])
+
+    # KPI Title
+    ws = make_sheet("KPI Title")
+    put_header(ws, 1, ["KPI Title", "Performance Measure", "Achieved"])
+
+    for ws in wb.worksheets:
+        span = {}
+        for mr in ws.merged_cells.ranges:
+            span[(mr.min_row, mr.min_col)] = (mr.min_col, mr.max_col)
+        for row in ws.iter_rows():
+            for cell in row:
+                if not (cell.value and cell.font and cell.font.italic):
+                    continue
+                c0, c1 = span.get((cell.row, cell.column), (cell.column, cell.column))
+                width = sum(
+                    ws.column_dimensions[get_column_letter(c)].width or 10
+                    for c in range(c0, c1 + 1)
+                )
+                chars_per_line = max(int(width) - 4, 15)
+                lines = -(-len(str(cell.value)) // chars_per_line)
+                ws.row_dimensions[cell.row].height = max(
+                    ws.row_dimensions[cell.row].height or 0, lines * 14 + 6, 20
+                )
+
+    out = BytesIO()
+    wb.save(out)
+
+    frappe.response["filename"] = "Monthly_Progress_Upload_Template.xlsx"
+    frappe.response["filecontent"] = out.getvalue()
+    frappe.response["type"] = "binary"
