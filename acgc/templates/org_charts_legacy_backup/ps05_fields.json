@@ -1,0 +1,685 @@
+{
+  "site": "PS05",
+  "fields": {
+    "FACILITY_MANAGER_COUNT": {
+      "kind": "count",
+      "excel_match": "FACILITY MANAGER",
+      "box": [
+        757.1,
+        96.2,
+        764.2,
+        130.5
+      ]
+    },
+    "HSE_DEPT_COUNT": {
+      "kind": "count",
+      "excel_match": "HSE DEPT.",
+      "box": [
+        1142.7,
+        197.4,
+        1150.3,
+        234.2
+      ]
+    },
+    "GENERAL_ADMINSTRATION_COUNT": {
+      "kind": "count",
+      "excel_match": "GENERAL ADMINSTRATION",
+      "box": [
+        366.8,
+        199.7,
+        380.0,
+        234.8
+      ]
+    },
+    "SITE_ADMINISTRATOR_COUNT": {
+      "kind": "count",
+      "excel_match": "SITE ADMINISTRATOR",
+      "box": [
+        368.6,
+        234.0,
+        375.9,
+        269.1
+      ]
+    },
+    "SAFETY_OFFICER_COUNT": {
+      "kind": "count",
+      "excel_match": "SAFETY OFFICER",
+      "box": [
+        1155.0,
+        235.0,
+        1162.7,
+        271.9
+      ]
+    },
+    "FACILITY_ENGINEER_COUNT": {
+      "kind": "count",
+      "excel_match": "FACILITY ENGINEER",
+      "box": [
+        753.9,
+        235.2,
+        761.0,
+        269.5
+      ]
+    },
+    "LOCAL_PURCHASER_COUNT": {
+      "kind": "count",
+      "excel_match": "LOCAL PURCHASER",
+      "box": [
+        367.5,
+        268.3,
+        374.8,
+        303.4
+      ]
+    },
+    "DRIVER_COUNT": {
+      "kind": "count",
+      "excel_match": "DRIVER",
+      "box": [
+        364.7,
+        301.5,
+        377.1,
+        336.6
+      ]
+    },
+    "WAREHOUSE_ADMINISTRATOR_COUNT": {
+      "kind": "count",
+      "excel_match": "WAREHOUSE ADMINISTRATOR",
+      "box": [
+        593.5,
+        383.2,
+        600.9,
+        417.5
+      ]
+    },
+    "HOUSI_FRONT_OFFICE_ADMIN_COUNT": {
+      "kind": "count",
+      "excel_match": "HOUSI. FRONT OFFICE ADMIN.",
+      "box": [
+        986.7,
+        394.5,
+        993.8,
+        428.8
+      ]
+    },
+    "CMMS_HELP_DESK_COUNT": {
+      "kind": "count",
+      "excel_match": "CMMS / HELP DESK",
+      "box": [
+        986.0,
+        454.2,
+        997.3,
+        488.5
+      ]
+    },
+    "MAINTENANCE_UNIT_COUNT": {
+      "kind": "count",
+      "excel_match": "MAINTENANCE UNIT",
+      "box": [
+        201.8,
+        547.3,
+        219.1,
+        581.6
+      ]
+    },
+    "SECURITY_MANAGEMENT_COUNT": {
+      "kind": "count",
+      "excel_match": "SECURITY MANAGEMENT",
+      "box": [
+        1291.4,
+        551.3,
+        1311.4,
+        585.6
+      ]
+    },
+    "HOUSE_KEEPING_REC_SERVICES_COUNT": {
+      "kind": "count",
+      "excel_match": "HOUSE KEEPING & RECREATIONAL SERVICES",
+      "box": [
+        776.5,
+        552.2,
+        800.8,
+        586.5
+      ]
+    },
+    "SECURITY_MANAGEMENT_COUNT_2": {
+      "kind": "count",
+      "excel_match": "SECURITY MANAGEMENT",
+      "box": [
+        1290.6,
+        582.8,
+        1310.6,
+        617.1
+      ]
+    },
+    "MAINTENANCE_SUPERVISOR_COUNT": {
+      "kind": "count",
+      "excel_match": "MAINTENANCE SUPERVISOR",
+      "box": [
+        190.4,
+        597.0,
+        197.5,
+        631.3
+      ]
+    },
+    "SUPERVISOR_COUNT": {
+      "kind": "count",
+      "excel_match": "SUPERVISOR",
+      "box": [
+        784.1,
+        614.2,
+        791.2,
+        648.5
+      ]
+    },
+    "CATERING_LAUNDRY_TELECOM_COUNT": {
+      "kind": "count",
+      "excel_match": "CATERING LAUNDRY / TELECOM",
+      "box": [
+        1295.8,
+        641.6,
+        1316.9,
+        672.4
+      ]
+    },
+    "MECHANICAL_TECHNICIANS_COUNT": {
+      "kind": "count",
+      "excel_match": "MECHANICAL TECHNICIANS",
+      "box": [
+        187.3,
+        648.0,
+        198.6,
+        682.3
+      ]
+    },
+    "QUDRAT_COUNT": {
+      "kind": "count",
+      "excel_match": "QUDRAT",
+      "box": [
+        1285.2,
+        675.8,
+        1308.6,
+        710.1
+      ]
+    },
+    "HVAC_CHILLER_TECHNICIANS_COUNT": {
+      "kind": "count",
+      "excel_match": "HVAC / CHILLER TECHNICIANS",
+      "box": [
+        187.9,
+        692.0,
+        200.0,
+        726.3
+      ]
+    },
+    "RESIDENTIAL_SERVICES_COUNT": {
+      "kind": "count",
+      "excel_match": "RESIDENTIAL SERVICES",
+      "box": [
+        532.3,
+        733.2,
+        543.7,
+        765.8
+      ]
+    },
+    "REC_SERVICES_COUNT": {
+      "kind": "count",
+      "excel_match": "RECRATIONAL SERVICES",
+      "box": [
+        1029.9,
+        733.2,
+        1042.1,
+        765.8
+      ]
+    },
+    "ELECTRICAL_TECHNICIAN_COUNT": {
+      "kind": "count",
+      "excel_match": "ELECTRICAL TECHNICIAN",
+      "box": [
+        187.9,
+        734.0,
+        200.0,
+        768.3
+      ]
+    },
+    "EXTERNAL_SERVICES_COUNT": {
+      "kind": "count",
+      "excel_match": "EXTERNAL SERVICES",
+      "box": [
+        756.8,
+        735.4,
+        773.2,
+        764.6
+      ]
+    },
+    "FIRE_ALARM_CCTV_TECH_COUNT": {
+      "kind": "count",
+      "excel_match": "FIRE ALARM / CCTV TECH",
+      "box": [
+        188.3,
+        769.0,
+        199.6,
+        803.3
+      ]
+    },
+    "TEAM_LEADER_COUNT": {
+      "kind": "count",
+      "excel_match": "TEAM LEADER",
+      "box": [
+        532.3,
+        784.1,
+        543.7,
+        818.4
+      ]
+    },
+    "GARDENER_COUNT": {
+      "kind": "count",
+      "excel_match": "GARDENER",
+      "box": [
+        761.5,
+        785.4,
+        772.9,
+        819.7
+      ]
+    },
+    "FITNESS_INSTRUCTOR_COUNT": {
+      "kind": "count",
+      "excel_match": "FITNESS INSTRUCTOR",
+      "box": [
+        1021.6,
+        790.4,
+        1028.8,
+        824.7
+      ]
+    },
+    "ROOM_ATTENDANT_COUNT": {
+      "kind": "count",
+      "excel_match": "ROOM ATTENDANT",
+      "box": [
+        530.7,
+        826.1,
+        543.3,
+        860.4
+      ]
+    },
+    "PLUMBER_COUNT": {
+      "kind": "count",
+      "excel_match": "PLUMBER",
+      "box": [
+        189.1,
+        828.4,
+        200.4,
+        862.7
+      ]
+    },
+    "JANITORS_GENERAL_COUNT": {
+      "kind": "count",
+      "excel_match": "JANITORS - GENERAL",
+      "box": [
+        757.2,
+        834.4,
+        769.2,
+        868.7
+      ]
+    },
+    "IMAM_MUEZZIN_COUNT": {
+      "kind": "count",
+      "excel_match": "IMAM / MUEZZIN",
+      "box": [
+        1018.5,
+        837.4,
+        1029.9,
+        871.7
+      ]
+    },
+    "TEA_BOY_COUNT": {
+      "kind": "count",
+      "excel_match": "TEA BOY",
+      "box": [
+        533.4,
+        865.1,
+        540.6,
+        899.4
+      ]
+    },
+    "WM_JANITORS_COUNT": {
+      "kind": "count",
+      "excel_match": "WM  JANITORS",
+      "box": [
+        757.8,
+        868.6,
+        768.6,
+        901.1
+      ]
+    },
+    "STP_OPERATOR_COUNT": {
+      "kind": "count",
+      "excel_match": "STP OPERATOR",
+      "box": [
+        190.2,
+        874.0,
+        197.3,
+        908.2
+      ]
+    },
+    "BARBERS_COUNT": {
+      "kind": "count",
+      "excel_match": "BARBERS",
+      "box": [
+        1018.5,
+        894.4,
+        1029.9,
+        928.7
+      ]
+    },
+    "HANDYMAN_COUNT": {
+      "kind": "count",
+      "excel_match": "HANDYMAN",
+      "box": [
+        188.7,
+        911.0,
+        200.8,
+        945.2
+      ]
+    },
+    "FACILITY_MANAGER_NAME": {
+      "kind": "name",
+      "excel_match": "FACILITY MANAGER",
+      "box": [
+        607.2,
+        123.0,
+        758.3,
+        143.7
+      ]
+    },
+    "FACILITY_ENGINEER_NAME": {
+      "kind": "name",
+      "excel_match": "FACILITY ENGINEER",
+      "box": [
+        630.8,
+        255.0,
+        722.7,
+        275.7
+      ]
+    },
+    "SITE_ADMINISTRATOR_NAME": {
+      "kind": "name",
+      "excel_match": "SITE ADMINISTRATOR",
+      "box": [
+        243.7,
+        249.8,
+        332.4,
+        267.4
+      ]
+    },
+    "LOCAL_PURCHASER_NAME": {
+      "kind": "name",
+      "excel_match": "LOCAL PURCHASER",
+      "box": [
+        225.8,
+        285.1,
+        336.1,
+        302.8
+      ]
+    },
+    "SAFETY_OFFICER_NAME": {
+      "kind": "name",
+      "excel_match": "SAFETY OFFICER",
+      "box": [
+        1019.8,
+        250.0,
+        1128.9,
+        270.2
+      ]
+    },
+    "HOUSI_FRONT_OFFICE_ADMIN_NAME": {
+      "kind": "name",
+      "excel_match": "HOUSI. FRONT OFFICE ADMIN.",
+      "box": [
+        809.0,
+        415.0,
+        924.5,
+        435.6
+      ]
+    },
+    "WAREHOUSE_ADMINISTRATOR_NAME": {
+      "kind": "name",
+      "excel_match": "WAREHOUSE ADMINISTRATOR",
+      "box": [
+        426.2,
+        404.0,
+        529.3,
+        422.8
+      ]
+    },
+    "SUPERVISOR_NAME": {
+      "kind": "name",
+      "excel_match": "SUPERVISOR",
+      "box": [
+        606.9,
+        639.0,
+        764.6,
+        659.6
+      ]
+    },
+    "CMMS_HELP_DESK_NAME": {
+      "kind": "name",
+      "excel_match": "CMMS / HELP DESK",
+      "box": [
+        793.4,
+        475.0,
+        940.1,
+        495.6
+      ]
+    },
+    "MAINTENANCE_SUPERVISOR_NAME": {
+      "kind": "name",
+      "excel_match": "MAINTENANCE SUPERVISOR",
+      "box": [
+        35.9,
+        611.6,
+        153.7,
+        627.3
+      ]
+    },
+    "TEAM_LEADER_NAME": {
+      "kind": "name",
+      "excel_match": "TEAM LEADER",
+      "box": [
+        377.7,
+        796.3,
+        457.0,
+        815.2
+      ]
+    },
+    "GARDENER_NAME": {
+      "kind": "name",
+      "excel_match": "GARDENER",
+      "box": [
+        748.3,
+        797.7,
+        758.1,
+        817.6
+      ]
+    },
+    "GARDENER_NAME2": {
+      "kind": "name",
+      "excel_match": "GARDENER",
+      "box": [
+        638.6,
+        798.3,
+        748.3,
+        817.2
+      ]
+    },
+    "FITNESS_INSTRUCTOR_NAME": {
+      "kind": "name",
+      "excel_match": "FITNESS INSTRUCTOR",
+      "box": [
+        897.0,
+        802.6,
+        984.6,
+        821.5
+      ]
+    },
+    "IMAM_MUEZZIN_NAME": {
+      "kind": "name",
+      "excel_match": "IMAM / MUEZZIN",
+      "box": [
+        900.0,
+        852.5,
+        1005.6,
+        871.3
+      ]
+    },
+    "BARBERS_NAME": {
+      "kind": "name",
+      "excel_match": "BARBERS",
+      "box": [
+        883.2,
+        866.9,
+        1022.4,
+        885.7
+      ]
+    },
+    "BARBERS_NAME2": {
+      "kind": "name",
+      "excel_match": "BARBERS",
+      "box": [
+        874.8,
+        912.2,
+        951.2,
+        931.0
+      ]
+    },
+    "MECHANICAL_TECHNICIANS_NAME": {
+      "kind": "name",
+      "excel_match": "MECHANICAL TECHNICIANS",
+      "box": [
+        33.6,
+        660.3,
+        138.6,
+        676.0
+      ]
+    },
+    "MECHANICAL_TECHNICIANS_NAME2": {
+      "kind": "name",
+      "excel_match": "MECHANICAL TECHNICIANS",
+      "box": [
+        15.9,
+        672.3,
+        156.2,
+        688.0
+      ]
+    },
+    "FIRE_ALARM_CCTV_TECH_NAME": {
+      "kind": "name",
+      "excel_match": "FIRE ALARM / CCTV TECH",
+      "box": [
+        63.4,
+        790.7,
+        150.2,
+        806.4
+      ]
+    },
+    "PLUMBER_NAME": {
+      "kind": "name",
+      "excel_match": "PLUMBER",
+      "box": [
+        58.0,
+        802.7,
+        155.6,
+        818.4
+      ]
+    },
+    "PLUMBER_NAME2": {
+      "kind": "name",
+      "excel_match": "PLUMBER",
+      "box": [
+        53.1,
+        840.5,
+        182.7,
+        856.2
+      ]
+    },
+    "STP_OPERATOR_NAME": {
+      "kind": "name",
+      "excel_match": "STP OPERATOR",
+      "box": [
+        71.5,
+        852.5,
+        164.3,
+        868.2
+      ]
+    },
+    "STP_OPERATOR_NAME2": {
+      "kind": "name",
+      "excel_match": "STP OPERATOR",
+      "box": [
+        44.9,
+        892.9,
+        142.6,
+        908.6
+      ]
+    },
+    "PREPARED_BY": {
+      "kind": "name",
+      "excel_match": "Prepared by:",
+      "box": [
+        44.1,
+        1018.6,
+        107.9,
+        1033.7
+      ]
+    },
+    "REVIEWED_BY": {
+      "kind": "name",
+      "excel_match": "Reviewed by:",
+      "box": [
+        146.1,
+        1018.6,
+        231.8,
+        1033.7
+      ]
+    },
+    "APPROVED_BY": {
+      "kind": "name",
+      "excel_match": "Approved by:",
+      "box": [
+        247.3,
+        1018.6,
+        349.1,
+        1033.7
+      ]
+    },
+    "REVISION": {
+      "kind": "text",
+      "excel_match": "REVISION",
+      "box": [
+        1229.9,
+        1025.4,
+        1271.9,
+        1036.1
+      ]
+    },
+    "DATE": {
+      "kind": "text",
+      "excel_match": "DATE",
+      "box": [
+        1286.5,
+        1025.7,
+        1340.6,
+        1036.3
+      ]
+    },
+    "AS_PER_CONTRACT_COUNT": {
+      "kind": "count",
+      "excel_match": "AS PER CONTRACT",
+      "box": [
+        1313.3,
+        991.1,
+        1324.3,
+        1007.4
+      ]
+    }
+  }
+}

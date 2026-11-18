@@ -9,9 +9,10 @@
   "select_site",
   "column_break_hyqc",
   "posting_date",
-  "column_break_bzxr",
+  "section_break_uploads",
   "upload",
-  "tab_2_tab"
+  "column_break_bzxr",
+  "organization_chart_upload"
  ],
  "fields": [
   {
@@ -23,18 +24,8 @@
    "reqd": 1
   },
   {
-   "fieldname": "upload",
-   "fieldtype": "Attach",
-   "label": "Upload"
-  },
-  {
    "fieldname": "column_break_hyqc",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "tab_2_tab",
-   "fieldtype": "Tab Break",
-   "label": "Tab 2"
   },
   {
    "default": "Today",
@@ -44,14 +35,29 @@
    "label": "Posting Date"
   },
   {
+   "fieldname": "section_break_uploads",
+   "fieldtype": "Section Break",
+   "label": "Upload Files"
+  },
+  {
+   "fieldname": "upload",
+   "fieldtype": "Attach",
+   "label": "Upload"
+  },
+  {
    "fieldname": "column_break_bzxr",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "organization_chart_upload",
+   "fieldtype": "Attach",
+   "label": "Organization Chart Upload"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-22 12:14:08.557182",
+ "modified": "2026-11-18 16:05:00.000000",
  "modified_by": "Administrator",
  "module": "ACGC",
  "name": "Monthly Progress Upload",

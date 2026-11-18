@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Monthly Progress Upload", {
-	refresh(frm) {
+    refresh(frm) {
         var $w = frm.fields_dict.upload.$wrapper;
         $w.find(".get-template-btn").remove();
         var $target = $w.find(".control-input-container .control-input");
@@ -10,29 +10,31 @@ frappe.ui.form.on("Monthly Progress Upload", {
         if (!$target.length) $target = $w;
         $('<button class="btn btn-xs btn-default get-template-btn" style="margin-left:8px;">Get Template</button>')
             .appendTo($target)
-            .on("click", function(e){
+            .on("click", function (e) {
                 e.preventDefault();
                 window.location.href = "/api/method/acgc.acgc.doctype.monthly_progress_upload.monthly_progress_upload.get_template";
             });
 
-        frm.add_custom_button("Upload Data",function(){
-
+        frm.add_custom_button("Upload Data", function () {
             frappe.call({
-            method: "acgc.acgc.doctype.monthly_progress_upload.monthly_progress_upload.import_monthly_progress",
-            args: {
-                upload_doc: frm.doc.name
-            },
-            freeze:true,
-            freeze_message:"Uploading....",
-            callback(r) {
-                if (r.message) {
-                    frappe.msgprint(
-                        __("Monthly Progress Data Updated")
-                    );
+                method: "acgc.acgc.doctype.monthly_progress_upload.monthly_progress_upload.import_monthly_progress",
+                args: {
+                    upload_doc: frm.doc.name
+                },
+                freeze: true,
+                freeze_message: "Uploading....",
+                callback(r) {
+                    if (r.message && r.message.status === "success") {
+                        frappe.show_alert({
+                            message: __("Monthly Progress Data Updated"),
+                            indicator: "green"
+                        });
+                        if (r.message.monthly_progress_data) {
+                            frappe.set_route("Form", "Monthly Progress Data", r.message.monthly_progress_data);
+                        }
+                    }
                 }
-            }
+            });
         });
-    
-        })
-    }   
+    }
 });
