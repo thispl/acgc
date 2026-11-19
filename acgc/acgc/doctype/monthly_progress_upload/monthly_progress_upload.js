@@ -16,25 +16,33 @@ frappe.ui.form.on("Monthly Progress Upload", {
             });
 
         frm.add_custom_button("Upload Data", function () {
-            frappe.call({
-                method: "acgc.acgc.doctype.monthly_progress_upload.monthly_progress_upload.import_monthly_progress",
-                args: {
-                    upload_doc: frm.doc.name
-                },
-                freeze: true,
-                freeze_message: "Uploading....",
-                callback(r) {
-                    if (r.message && r.message.status === "success") {
-                        frappe.show_alert({
-                            message: __("Monthly Progress Data Updated"),
-                            indicator: "green"
-                        });
-                        if (r.message.monthly_progress_data) {
-                            frappe.set_route("Form", "Monthly Progress Data", r.message.monthly_progress_data);
+            const do_upload = () => {
+                frappe.call({
+                    method: "acgc.acgc.doctype.monthly_progress_upload.monthly_progress_upload.import_monthly_progress",
+                    args: {
+                        upload_doc: frm.doc.name
+                    },
+                    freeze: true,
+                    freeze_message: "Uploading....",
+                    callback(r) {
+                        if (r.message && r.message.status === "success") {
+                            frappe.show_alert({
+                                message: __("Monthly Progress Data Updated"),
+                                indicator: "green"
+                            });
+                            if (r.message.monthly_progress_data) {
+                                frappe.set_route("Form", "Monthly Progress Data", r.message.monthly_progress_data);
+                            }
                         }
                     }
-                }
-            });
+                });
+            };
+
+            if (frm.is_dirty() || frm.is_new()) {
+                frm.save().then(do_upload);
+            } else {
+                do_upload();
+            }
         });
     }
 });

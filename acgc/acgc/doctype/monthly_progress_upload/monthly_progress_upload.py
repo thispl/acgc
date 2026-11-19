@@ -984,19 +984,6 @@ def import_monthly_progress(upload_doc):
             org_file_path = org_file_doc.get_full_path()
             svg_url = generate_org_chart_svg(site=site, excel_file_path=org_file_path, posting_date=posting_date)
             doc.organization_chart = svg_url
-
-            # Also ensure the uploaded Org Chart Excel file is attached to the Monthly Progress Data doc
-            if not frappe.db.exists("File", {"file_url": upload_doc.organization_chart_upload, "attached_to_doctype": "Monthly Progress Data", "attached_to_name": doc.name}):
-                try:
-                    att_file = frappe.new_doc("File")
-                    att_file.file_name = org_file_doc.file_name
-                    att_file.file_url = upload_doc.organization_chart_upload
-                    att_file.attached_to_doctype = "Monthly Progress Data"
-                    att_file.attached_to_name = doc.name
-                    att_file.is_private = 0
-                    att_file.save(ignore_permissions=True)
-                except Exception:
-                    pass
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), f"Org Chart SVG Generation Error: {str(e)}")
             frappe.msgprint(f"Warning: Org Chart generation failed: {str(e)}", indicator="orange")
@@ -1012,6 +999,21 @@ def import_monthly_progress(upload_doc):
                     frappe.log_error(frappe.get_traceback(), f"Org Chart SVG Generation Error: {str(e)}")
 
     doc.save(ignore_permissions=True)
+
+    # Ensure the uploaded Org Chart Excel file is attached to the Monthly Progress Data doc
+    if upload_doc.get("organization_chart_upload") and doc.name:
+        try:
+            if not frappe.db.exists("File", {"file_url": upload_doc.organization_chart_upload, "attached_to_doctype": "Monthly Progress Data", "attached_to_name": doc.name}):
+                att_file = frappe.new_doc("File")
+                att_file.file_name = org_file_doc.file_name if 'org_file_doc' in locals() and org_file_doc else upload_doc.organization_chart_upload.split("/")[-1]
+                att_file.file_url = upload_doc.organization_chart_upload
+                att_file.attached_to_doctype = "Monthly Progress Data"
+                att_file.attached_to_name = doc.name
+                att_file.is_private = 0
+                att_file.save(ignore_permissions=True)
+        except Exception:
+            pass
+
     frappe.db.commit()
 
     return {
