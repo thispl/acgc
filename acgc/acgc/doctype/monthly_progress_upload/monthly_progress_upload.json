@@ -42,7 +42,7 @@
   {
    "fieldname": "upload",
    "fieldtype": "Attach",
-   "label": "Upload"
+   "label": "Progress Data Upload"
   },
   {
    "fieldname": "column_break_bzxr",
