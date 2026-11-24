@@ -166,7 +166,7 @@ def extract_excel_hierarchy(file_path, site_name="", posting_date=None):
             elif (l.startswith("date") or "date:" in l) and not footer_meta["date"]:
                 footer_meta["date"] = re.sub(r"(?i)^date\s*:?\s*", "", s).strip()
             elif "as per contract" in l:
-                for coff in range(1, 40):
+                for coff in range(1, 100):
                     cv = ws.cell(row=r, column=c+coff).value
                     if cv is not None and (isinstance(cv, (int, float)) or str(cv).strip().isdigit()):
                         footer_meta["total_count"] = str(int(cv) if isinstance(cv, (int, float)) else str(cv).strip())
