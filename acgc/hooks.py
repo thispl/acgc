@@ -11,15 +11,14 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "acgc",
-# 		"logo": "/assets/acgc/logo.png",
-# 		"title": "ACGC",
-# 		"route": "/acgc",
-# 		"has_permission": "acgc.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+	{
+		"name": "acgc",
+		"logo": "/files/ACGC Logo Grid.png",
+		"title": "ACGC",
+		"route": "/desk/acgc/monthly-progress-upload",
+	}
+]
 
 # Includes in <head>
 # ------------------
