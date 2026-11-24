@@ -67,20 +67,6 @@ def import_monthly_progress(upload_doc):
         except Exception:
             frappe.throw("Unable to locate uploaded Organization Chart file.")
 
-    period = None
-    if file_path:
-        period = extract_reporting_period(file_path)
-    if not period and org_file_path:
-        period = extract_reporting_period(org_file_path)
-
-    if period:
-        year, month = period
-        last_day = calendar.monthrange(year, month)[1]
-        posting_date = posting_date.replace(
-            year=year, month=month, day=min(posting_date.day, last_day))
-        month = posting_date.month
-        year = posting_date.year
-
     existing = frappe.db.sql("""
         SELECT name
         FROM `tabMonthly Progress Data`
@@ -881,13 +867,13 @@ def import_monthly_progress(upload_doc):
                     if pd.isna(row[0]):
                         continue
 
-                    month = str(row[0]).strip()
+                    row_month = str(row[0]).strip()
 
-                    if month.upper() in ["MONTH", "TOTAL"]:
+                    if row_month.upper() in ["MONTH", "TOTAL"]:
                         continue
 
                     doc.append("month_summary", {
-                        "month": month,
+                        "month": row_month,
                         "type": "PM",
                         "scheduled": 0 if pd.isna(row[1]) else float(row[1]),
                         "accomplished": 0 if pd.isna(row[2]) else float(row[2]),
@@ -900,13 +886,13 @@ def import_monthly_progress(upload_doc):
                     if pd.isna(row[0]):
                         continue
 
-                    month = str(row[0]).strip()
+                    row_month = str(row[0]).strip()
 
-                    if month.upper() in ["MONTH", "TOTAL"]:
+                    if row_month.upper() in ["MONTH", "TOTAL"]:
                         continue
 
                     doc.append("month_summary", {
-                        "month": month,
+                        "month": row_month,
                         "type": "CM",
                         "scheduled": 0 if pd.isna(row[1]) else float(row[1]),
                         "accomplished": 0 if pd.isna(row[2]) else float(row[2]),
@@ -919,13 +905,13 @@ def import_monthly_progress(upload_doc):
                     if pd.isna(row[0]):
                         continue
 
-                    month = str(row[0]).strip()
+                    row_month = str(row[0]).strip()
 
-                    if month.upper() in ["MONTH", "TOTAL"]:
+                    if row_month.upper() in ["MONTH", "TOTAL"]:
                         continue
 
                     doc.append("month_summary", {
-                        "month": month,
+                        "month": row_month,
                         "type": "WR",
                         "scheduled": 0 if pd.isna(row[1]) else float(row[1]),
                         "accomplished": 0 if pd.isna(row[2]) else float(row[2]),
@@ -936,23 +922,23 @@ def import_monthly_progress(upload_doc):
                 for _, row in overall_df.iterrows():
                     if pd.isna(row[0]):
                         continue
-                    month = str(row[0]).strip()
-                    if not month:
+                    row_month = str(row[0]).strip()
+                    if not row_month:
                         continue
                     doc.append("overall_summary", {
-                        "month": month,
+                        "month": row_month,
                         "type": "PM",
                         "accomplished": 0 if pd.isna(row[1]) else float(row[1])
                     })
 
                     doc.append("overall_summary", {
-                        "month": month,
+                        "month": row_month,
                         "type": "CM",
                         "accomplished": 0 if pd.isna(row[2]) else float(row[2])
                     })
 
                     doc.append("overall_summary", {
-                        "month": month,
+                        "month": row_month,
                         "type": "WR",
                         "accomplished": 0 if pd.isna(row[3]) else float(row[3])
                     })
@@ -1018,11 +1004,14 @@ def import_monthly_progress(upload_doc):
 
     return {
         "status": "success",
-        "monthly_progress_data": doc.name
+        "monthly_progress_data": doc.name,
+        "posting_date": str(posting_date),
+        "period_month": calendar.month_name[posting_date.month],
+        "period_year": posting_date.year
     }
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_template():
     from io import BytesIO
 

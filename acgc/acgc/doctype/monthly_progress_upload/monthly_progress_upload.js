@@ -26,8 +26,10 @@ frappe.ui.form.on("Monthly Progress Upload", {
                     freeze_message: "Uploading....",
                     callback(r) {
                         if (r.message && r.message.status === "success") {
+                            const month_name = r.message.period_month || "";
+                            const yr = r.message.period_year || "";
                             frappe.show_alert({
-                                message: __("Monthly Progress Data Updated"),
+                                message: month_name ? __("Monthly Progress Data Created/Updated for {0} {1}", [month_name, yr]) : __("Monthly Progress Data Updated"),
                                 indicator: "green"
                             });
                             if (r.message.monthly_progress_data) {

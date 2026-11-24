@@ -71,19 +71,9 @@ class MonthlyProgressData(Document):
 
         if self.organization_chart and (str(self.organization_chart).lower().endswith(".xlsx") or str(self.organization_chart).lower().endswith(".xls")):
             try:
-                from acgc.utils.org_chart_generator import generate_org_chart_svg, extract_reporting_period
+                from acgc.utils.org_chart_generator import generate_org_chart_svg
                 file_doc = frappe.get_doc("File", {"file_url": self.organization_chart})
                 full_path = file_doc.get_full_path()
-                # The dashboard filters by month/year of posting_date, so file this
-                # record under the workbook's own reporting period (a month header
-                # inside the file, else its file name) rather than the save date.
-                period = extract_reporting_period(full_path)
-                if period:
-                    year, month = period
-                    d = getdate(self.posting_date)
-                    self.posting_date = d.replace(
-                        year=year, month=month,
-                        day=min(d.day, calendar.monthrange(year, month)[1]))
                 svg_url = generate_org_chart_svg(site=self.site, excel_file_path=full_path, posting_date=self.posting_date)
                 self.organization_chart = svg_url
             except Exception as e:
