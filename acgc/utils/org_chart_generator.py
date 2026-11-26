@@ -304,25 +304,40 @@ def draw_arrow_down(x, y1, y2, color="#5285be", stroke_width=1.4):
     return f"{line}\n{arrow}"
 
 
+# ---------------------------------------------------------------------------
+# Uniform typography — one font family (set on the SVG root and inherited by
+# all text), one size and one weight for every <text> element in the chart.
+# ---------------------------------------------------------------------------
+FONT_SIZE = 12
+FONT_WEIGHT = "600"
+HEADING_FONT_SIZE = 14
+
+# Acronyms that keep full capitals when text is rendered in title case.
+_ACRONYMS = {"CMMS", "MEP", "HVAC", "CCTV", "STP", "RO", "HSE", "HR", "IT", "PRS"}
+
+
+def display_case(text):
+    """Title-case every word (first letter uppercase, rest lowercase),
+    preserving known acronyms in full capitals."""
+    return " ".join(
+        w.upper() if w.upper() in _ACRONYMS or any(ch.isdigit() for ch in w) else w
+        for w in str(text).strip().title().split()
+    )
+
+
 def render_box(x, y, w, h, title, name="", count=None, box_type="standard"):
     """
     Renders an organization chart card with title and employee name
     CENTERED inside the box, using Illustrator colors and fonts.
     """
     cnt_str = str(count) if count is not None else ""
-    t_clean = xml_escape(title.strip())
-    n_clean = xml_escape(name.strip())
+    t_clean = xml_escape(display_case(title))
+    n_clean = xml_escape(display_case(name))
 
     cx = x + w / 2
 
-    # Responsive font size based on title length
-    t_len = len(t_clean)
-    if t_len > 25:
-        font_sz = "9.5"
-    elif t_len > 19:
-        font_sz = "10.5"
-    else:
-        font_sz = "11.5"
+    # Uniform font size for every text element in the chart.
+    font_sz = FONT_SIZE
 
     has_name = bool(n_clean)
     t_y = y + 20 if has_name else y + 29
@@ -359,17 +374,27 @@ def render_box(x, y, w, h, title, name="", count=None, box_type="standard"):
         bx = x + w - 26
         by = y + 3
         badge_markup = f"""<rect x="{bx}" y="{by}" width="22" height="18" rx="3" fill="{badge_bg}" stroke="#ffffff" stroke-width="0.8"/>
-            <text x="{bx + 11}" y="{by + 13}" font-size="10" font-weight="bold" fill="{badge_fg}" text-anchor="middle">{cnt_str}</text>"""
+            <text x="{bx + 11}" y="{by + 13}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="{badge_fg}" text-anchor="middle">{cnt_str}</text>"""
 
     # Center-aligned text inside the card
     name_markup = ""
     if has_name:
-        name_markup = f'<text x="{cx}" y="{n_y}" font-size="10.5" font-weight="600" fill="{n_col}" text-anchor="middle">{n_clean}</text>'
+        name_markup = f'<text x="{cx}" y="{n_y}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="{n_col}" text-anchor="middle">{n_clean}</text>'
+
+    # When a count badge sits in the top-right corner, keep the title centered
+    # unless it would reach the badge — then shift it just enough to clear the
+    # badge, never past the card's left edge.
+    est_w = len(title.strip()) * 0.55 * font_sz
+    t_x = cx
+    if cnt_str:
+        badge_left = x + w - 31
+        t_x = min(cx, badge_left - est_w / 2)
+        t_x = max(t_x, x + 4 + est_w / 2)
 
     return f"""
         <g>
             <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="4" fill="{fill_col}" stroke="{stroke_col}" stroke-width="{stroke_w}"/>
-            <text x="{cx}" y="{t_y}" font-size="{font_sz}" font-weight="bold" fill="{t_col}" text-anchor="middle">{t_clean}</text>
+            <text x="{t_x}" y="{t_y}" font-size="{font_sz}" font-weight="{FONT_WEIGHT}" fill="{t_col}" text-anchor="middle">{t_clean}</text>
             {name_markup}
             {badge_markup}
         </g>
@@ -476,8 +501,8 @@ def build_exact_excel_branch_svg(H, main_title, footer_meta, site_name="", perio
 
     svg.append(f"""
         <rect x="18" y="18" width="{total_w - 36}" height="70" rx="4" fill="#003366"/>
-        <text x="{total_w / 2}" y="47" font-size="19" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">{xml_escape(main_title.upper())}</text>
-        <text x="{total_w / 2}" y="70" font-size="12" font-weight="600" fill="#f7e97e" text-anchor="middle" letter-spacing="0.8">{xml_escape(sub_title_text)}</text>
+        <text x="{total_w / 2}" y="47" font-size="{HEADING_FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#ffffff" text-anchor="middle">{xml_escape(display_case(main_title))}</text>
+        <text x="{total_w / 2}" y="70" font-size="{HEADING_FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#f7e97e" text-anchor="middle">{xml_escape(display_case(sub_title_text))}</text>
     """)
 
     # Root Node: Facility Manager
@@ -493,10 +518,10 @@ def build_exact_excel_branch_svg(H, main_title, footer_meta, site_name="", perio
             <rect x="{fm_x}" y="{fm_y}" width="{fm_w}" height="{fm_h}" rx="4" fill="#5888b8" stroke="#003366" stroke-width="1.5"/>
             <rect x="{fm_x}" y="{fm_y}" width="{fm_w}" height="24" rx="4" fill="#003366"/>
             <rect x="{fm_x}" y="{fm_y + 16}" width="{fm_w}" height="8" fill="#003366"/>
-            <text x="{fm_x + fm_w / 2}" y="{fm_y + 17}" font-size="12.5" font-weight="bold" fill="#ffffff" text-anchor="middle">{xml_escape(fm['title'])}</text>
-            <text x="{fm_x + fm_w / 2}" y="{fm_y + 43}" font-size="13" font-weight="bold" fill="#f7e97e" text-anchor="middle">{xml_escape(fm.get('name', ''))}</text>
+            <text x="{fm_x + fm_w / 2}" y="{fm_y + 17}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#ffffff" text-anchor="middle">{xml_escape(display_case(fm['title']))}</text>
+            <text x="{fm_x + fm_w / 2}" y="{fm_y + 43}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#f7e97e" text-anchor="middle">{xml_escape(display_case(fm.get('name', '')))}</text>
             <rect x="{fm_x + fm_w - 38}" y="{fm_y + 16}" width="30" height="24" rx="3" fill="#003366" stroke="#ffffff" stroke-width="1"/>
-            <text x="{fm_x + fm_w - 23}" y="{fm_y + 33}" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">{xml_escape(str(fm.get('count', 1)))}</text>
+            <text x="{fm_x + fm_w - 23}" y="{fm_y + 33}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#ffffff" text-anchor="middle">{xml_escape(str(fm.get('count', 1)))}</text>
             <line x1="{total_w / 2}" y1="{fm_y + fm_h}" x2="{total_w / 2}" y2="{top_bus_y}" stroke="#003366" stroke-width="1.8"/>
         </g>
     """)
@@ -661,33 +686,33 @@ def build_exact_excel_branch_svg(H, main_title, footer_meta, site_name="", perio
 
             <!-- Prepared By -->
             <rect x="{x_prep}" y="{fy}" width="{col_prep_w}" height="24" fill="#003366"/>
-            <text x="{x_prep + col_prep_w / 2}" y="{fy + 16}" font-size="10.5" font-weight="bold" fill="#ffffff" text-anchor="middle">PREPARED BY:</text>
-            <text x="{x_prep + col_prep_w / 2}" y="{fy + 52}" font-size="12" font-weight="600" fill="#003366" text-anchor="middle">{xml_escape(prep_val)}</text>
+            <text x="{x_prep + col_prep_w / 2}" y="{fy + 16}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#ffffff" text-anchor="middle">Prepared By:</text>
+            <text x="{x_prep + col_prep_w / 2}" y="{fy + 52}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#003366" text-anchor="middle">{xml_escape(display_case(prep_val))}</text>
             <line x1="{x_rev}" y1="{fy}" x2="{x_rev}" y2="{fy + footer_h}" stroke="#003366" stroke-width="1"/>
 
             <!-- Reviewed By -->
             <rect x="{x_rev}" y="{fy}" width="{col_rev_w}" height="24" fill="#003366"/>
-            <text x="{x_rev + col_rev_w / 2}" y="{fy + 16}" font-size="10.5" font-weight="bold" fill="#ffffff" text-anchor="middle">REVIEWED BY:</text>
-            <text x="{x_rev + col_rev_w / 2}" y="{fy + 52}" font-size="12" font-weight="600" fill="#003366" text-anchor="middle">{xml_escape(rev_val)}</text>
+            <text x="{x_rev + col_rev_w / 2}" y="{fy + 16}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#ffffff" text-anchor="middle">Reviewed By:</text>
+            <text x="{x_rev + col_rev_w / 2}" y="{fy + 52}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#003366" text-anchor="middle">{xml_escape(display_case(rev_val))}</text>
             <line x1="{x_app}" y1="{fy}" x2="{x_app}" y2="{fy + footer_h}" stroke="#003366" stroke-width="1"/>
 
             <!-- Approved / Authorized By -->
             <rect x="{x_app}" y="{fy}" width="{col_app_w}" height="24" fill="#003366"/>
-            <text x="{x_app + col_app_w / 2}" y="{fy + 16}" font-size="10.5" font-weight="bold" fill="#ffffff" text-anchor="middle">{xml_escape(app_label)}</text>
-            <text x="{x_app + col_app_w / 2}" y="{fy + 52}" font-size="12" font-weight="600" fill="#003366" text-anchor="middle">{xml_escape(app_val)}</text>
+            <text x="{x_app + col_app_w / 2}" y="{fy + 16}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#ffffff" text-anchor="middle">{xml_escape(display_case(app_label))}</text>
+            <text x="{x_app + col_app_w / 2}" y="{fy + 52}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#003366" text-anchor="middle">{xml_escape(display_case(app_val))}</text>
             <line x1="{x_meta}" y1="{fy}" x2="{x_meta}" y2="{fy + footer_h}" stroke="#003366" stroke-width="1"/>
 
             <!-- Revision, Date & Headcount Total -->
             <rect x="{x_meta}" y="{fy}" width="{col_meta_w}" height="24" fill="#386898"/>
-            <text x="{x_meta + col_meta_w / 2}" y="{fy + 16}" font-size="10.5" font-weight="bold" fill="#ffffff" text-anchor="middle">PROJECT METADATA</text>
+            <text x="{x_meta + col_meta_w / 2}" y="{fy + 16}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#ffffff" text-anchor="middle">Project Metadata</text>
 
-            <g font-size="11" font-weight="600" fill="#003366">
-                <text x="{x_meta + 14}" y="{fy + 44}">Revision: <tspan fill="#b07b4e">{xml_escape(footer_meta.get("revision") or "Rev. 01")}</tspan></text>
+            <g font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#003366">
+                <text x="{x_meta + 14}" y="{fy + 44}">Revision: <tspan fill="#b07b4e">{xml_escape(display_case(footer_meta.get("revision") or "Rev. 01"))}</tspan></text>
                 <text x="{x_meta + 14}" y="{fy + 62}">Date: <tspan fill="#b07b4e">{xml_escape(footer_meta.get("date") or "")}</tspan></text>
 
-                <text x="{fx + fw - 95}" y="{fy + 53}" text-anchor="end">AS PER CONTRACT:</text>
+                <text x="{fx + fw - 95}" y="{fy + 53}" text-anchor="end">As Per Contract:</text>
                 <rect x="{fx + fw - 85}" y="{fy + 36}" width="70" height="26" rx="4" fill="#003366"/>
-                <text x="{fx + fw - 50}" y="{fy + 54}" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">{xml_escape(footer_meta.get("total_count") or "Total")}</text>
+                <text x="{fx + fw - 50}" y="{fy + 54}" font-size="{FONT_SIZE}" font-weight="{FONT_WEIGHT}" fill="#ffffff" text-anchor="middle">{xml_escape(footer_meta.get("total_count") or "Total")}</text>
             </g>
         </g>
     """)

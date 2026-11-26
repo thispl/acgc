@@ -3,17 +3,33 @@
 
 import calendar
 import re
+import zipfile
 from datetime import datetime
 import pandas as pd
 import frappe
 from frappe.model.document import Document
 from frappe.utils import getdate
 
-from acgc.utils.org_chart_generator import extract_reporting_period
+from acgc.utils.org_chart_generator import extract_reporting_period, normalize_site
 
 
 class MonthlyProgressUpload(Document):
-    pass
+    def validate(self):
+        for fieldname in ("upload", "organization_chart_upload"):
+            file_url = self.get(fieldname)
+            if not file_url:
+                continue
+            if fieldname == "organization_chart_upload":
+                try:
+                    file_doc = frappe.get_doc("File", {"file_url": file_url})
+                except Exception:
+                    frappe.throw("Unable to locate uploaded Organization Chart file.")
+                validate_org_chart_file(file_doc.get_full_path(), self.select_site)
+            else:
+                file_name = frappe.db.get_value(
+                    "File", {"file_url": file_url}, "file_name"
+                ) or file_url.split("/")[-1]
+                validate_excel_site_id(file_name, self.select_site)
 
 
 def get_numeric_value(value):
@@ -35,6 +51,173 @@ def find_sheet(available_sheets, *names):
             return norm_available[key]
     return None
 
+
+def extract_site_id_from_filename(file_name):
+    match = re.match(r"^\s*(\d+)", str(file_name or ""))
+    return match.group(1) if match else None
+
+
+def validate_excel_site_id(file_name, site):
+    if not site:
+        frappe.throw("Please select a Site before uploading the Excel file.")
+
+    selected_site_id = frappe.db.get_value("Site", site, "site_id")
+    if not selected_site_id:
+        frappe.throw(
+            f"Site ID is not configured for site {site}. "
+            "Please set the Site ID on the Site record before uploading."
+        )
+
+    file_site_id = extract_site_id_from_filename(file_name)
+    if not file_site_id:
+        frappe.throw(
+            "Site ID not found in the Excel filename. "
+            "Please upload the correct site-specific Excel file."
+        )
+
+    if str(file_site_id).strip() != str(selected_site_id).strip():
+        frappe.throw(
+            f"Site ID mismatch! The selected site is configured with Site ID {selected_site_id}, "
+            f"but the uploaded Excel file belongs to Site ID {file_site_id}. "
+            "Please upload the correct Excel file."
+        )
+
+    return file_site_id
+
+
+def extract_org_chart_site_token(file_path):
+    import openpyxl
+
+    token = None
+    try:
+        wb = openpyxl.load_workbook(file_path, read_only=True, data_only=True)
+        for name in wb.sheetnames[:3]:
+            found = False
+            ws = wb[name]
+            for row in ws.iter_rows(min_row=1, max_row=15, values_only=True):
+                for cell in row:
+                    if cell is None:
+                        continue
+                    match = re.search(r"(?i)\b(prs|ps)\s*[_\-]?\s*(\d+)\b", str(cell))
+                    if match:
+                        token = match.group(1).upper() + match.group(2)
+                        found = True
+                        break
+                if found:
+                    break
+            if found:
+                break
+        wb.close()
+    except Exception:
+        frappe.log_error(frappe.get_traceback(), "Org Chart site token extraction failed")
+    return token
+
+
+def workbook_has_image(file_path):
+    try:
+        with zipfile.ZipFile(file_path) as zf:
+            return any(name.startswith("xl/media/") for name in zf.namelist())
+    except Exception:
+        return False
+
+
+def validate_org_chart_file(file_path, site):
+    if not site:
+        frappe.throw("Please select a Site before uploading the Organization Chart file.")
+
+    selected_site_id = frappe.db.get_value("Site", site, "site_id")
+    if not selected_site_id:
+        frappe.throw(
+            f"Site ID is not configured for site {site}. "
+            "Please set the Site ID on the Site record before uploading."
+        )
+
+    site_ok = False
+    token = extract_org_chart_site_token(file_path)
+    if token:
+        file_site_norm = normalize_site(token)
+        for s in frappe.get_all("Site", fields=["name", "site_id"]):
+            if normalize_site(s.name) == file_site_norm:
+                site_ok = str(s.site_id or "").strip() == str(selected_site_id).strip()
+                break
+
+    image_ok = workbook_has_image(file_path)
+
+    if site_ok and image_ok:
+        return
+    if not site_ok and not image_ok:
+        frappe.throw(
+            "Invalid Site ID and Organization Chart image is missing. "
+            "Please upload the correct file."
+        )
+    if not site_ok:
+        frappe.throw("Site ID does not match. Please upload the correct file.")
+    frappe.throw("Organization Chart image is missing. Please upload the correct file.")
+
+
+@frappe.whitelist()
+def validate_site_id(upload_doc=None, file_url=None, site=None):
+    targets = []
+    if upload_doc:
+        doc = frappe.get_doc("Monthly Progress Upload", upload_doc)
+        site = doc.select_site
+        for fieldname in ("upload", "organization_chart_upload"):
+            if doc.get(fieldname):
+                targets.append((fieldname, doc.get(fieldname)))
+    elif file_url:
+        targets.append(("upload", file_url))
+
+    file_site_id = None
+    failed_url = None
+    try:
+        if not targets:
+            frappe.throw("Please upload an Excel file for Monthly Data or Organization Chart.")
+        for fieldname, target in targets:
+            failed_url = target
+            try:
+                file_doc = frappe.get_doc("File", {"file_url": target})
+            except Exception:
+                frappe.throw("Unable to locate uploaded data file.")
+            if fieldname == "organization_chart_upload":
+                validate_org_chart_file(file_doc.get_full_path(), site)
+            else:
+                file_site_id = validate_excel_site_id(file_doc.file_name, site)
+        failed_url = None
+    except Exception as e:
+        frappe.clear_messages()
+        return {"status": "error", "message": str(e), "file_url": failed_url}
+
+    return {
+        "status": "success",
+        "message": "Site ID validated successfully. The uploaded Excel file belongs to the selected site.",
+        "site_id": file_site_id,
+    }
+
+
+@frappe.whitelist()
+def validate_org_chart(upload_doc=None, file_url=None, site=None):
+    if upload_doc:
+        doc = frappe.get_doc("Monthly Progress Upload", upload_doc)
+        site = doc.select_site
+        file_url = doc.get("organization_chart_upload")
+    try:
+        if not file_url:
+            frappe.throw("Please upload an Organization Chart file.")
+        try:
+            file_doc = frappe.get_doc("File", {"file_url": file_url})
+        except Exception:
+            frappe.throw("Unable to locate uploaded Organization Chart file.")
+        validate_org_chart_file(file_doc.get_full_path(), site)
+    except Exception as e:
+        frappe.clear_messages()
+        return {"status": "error", "message": str(e), "file_url": file_url}
+    return {
+        "status": "success",
+        "message": "Organization Chart validated successfully.",
+        "file_url": file_url,
+    }
+
+
 @frappe.whitelist()
 def import_monthly_progress(upload_doc):
     upload_doc = frappe.get_doc("Monthly Progress Upload", upload_doc)
@@ -53,6 +236,9 @@ def import_monthly_progress(upload_doc):
             file_path = file_doc.get_full_path()
         except Exception:
             frappe.throw("Unable to locate uploaded data file.")
+
+        validate_excel_site_id(file_doc.file_name, site)
+
         try:
             excel_file = pd.ExcelFile(file_path)
             available_sheets = excel_file.sheet_names
@@ -66,6 +252,8 @@ def import_monthly_progress(upload_doc):
             org_file_path = org_file_doc.get_full_path()
         except Exception:
             frappe.throw("Unable to locate uploaded Organization Chart file.")
+
+        validate_org_chart_file(org_file_path, site)
 
     existing = frappe.db.sql("""
         SELECT name
@@ -1012,7 +1200,27 @@ def import_monthly_progress(upload_doc):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_template():
+def get_template(site=None, posting_date=None):
+    if not site:
+        frappe.throw("Please select a Site before downloading the template.")
+
+    if not posting_date:
+        frappe.throw("Please select a Posting Date before downloading the template.")
+
+    site_id = frappe.db.get_value("Site", site, "site_id")
+    if not site_id:
+        frappe.throw(
+            f"Site ID is not configured for site {site}. "
+            "Please set the Site ID on the Site record before downloading the template."
+        )
+
+    template_date = getdate(posting_date)
+    safe_name = re.sub(r"\s+", "_", re.sub(r"[^\w\s]", "", str(site)).strip())
+    template_filename = (
+        f"{site_id}_EWRC_{safe_name}_MPR-Sheetwise_"
+        f"{calendar.month_name[template_date.month]}-{template_date.year}.xlsx"
+    )
+
     from io import BytesIO
 
     from openpyxl import Workbook
@@ -1293,6 +1501,6 @@ def get_template():
     out = BytesIO()
     wb.save(out)
 
-    frappe.response["filename"] = "Monthly_Progress_Upload_Template.xlsx"
+    frappe.response["filename"] = template_filename
     frappe.response["filecontent"] = out.getvalue()
     frappe.response["type"] = "binary"
