@@ -24,12 +24,17 @@ class MonthlyProgressUpload(Document):
                     file_doc = frappe.get_doc("File", {"file_url": file_url})
                 except Exception:
                     frappe.throw("Unable to locate uploaded Organization Chart file.")
-                validate_org_chart_file(file_doc.get_full_path(), self.select_site)
+                validate_org_chart_file(
+                    file_doc.get_full_path(), self.select_site, file_doc.file_name
+                )
             else:
-                file_name = frappe.db.get_value(
-                    "File", {"file_url": file_url}, "file_name"
-                ) or file_url.split("/")[-1]
-                validate_excel_site_id(file_name, self.select_site)
+                try:
+                    file_doc = frappe.get_doc("File", {"file_url": file_url})
+                except Exception:
+                    frappe.throw("Unable to locate uploaded data file.")
+                validate_excel_site_id(
+                    file_doc.file_name, self.select_site, file_doc.get_full_path()
+                )
 
 
 def get_numeric_value(value):
@@ -57,7 +62,56 @@ def extract_site_id_from_filename(file_name):
     return match.group(1) if match else None
 
 
-def validate_excel_site_id(file_name, site):
+MPR_DATA_SHEETS = {
+    "resident satisfaction survey",
+    "customer satisfaction survey",
+    "catering and laundry services",
+    "occupancy report",
+    "pm-cm-wr",
+    "total activites",
+    "total activities",
+    "manpower",
+    "saudisation",
+    "safety",
+    "energy management",
+    "water consumption",
+    "sewage water & garbage",
+    "gasoline consumption",
+    "safety & environment checklist",
+    "training on",
+    "kpi title",
+}
+
+
+def validate_progress_data_content(file_path):
+    import openpyxl
+
+    try:
+        wb = openpyxl.load_workbook(file_path, read_only=True, data_only=True)
+        sheet_names = list(wb.sheetnames)
+        wb.close()
+    except Exception:
+        frappe.throw(
+            "Unable to read the uploaded Progress Data Excel file. "
+            "Please upload a valid .xlsx file."
+        )
+
+    norm_sheets = {str(s).strip().lower() for s in sheet_names}
+    if norm_sheets & MPR_DATA_SHEETS:
+        return
+
+    if any("org" in s or "chart" in s for s in norm_sheets) or workbook_has_image(file_path):
+        frappe.throw(
+            "Invalid Progress Data file. An Organization Chart file cannot be uploaded here. "
+            "Please upload the Monthly Progress Report (MPR) Excel file."
+        )
+
+    frappe.throw(
+        "Invalid Progress Data file. Expected Monthly Progress Report sheets were not found."
+    )
+
+
+def validate_excel_site_id(file_name, site, file_path=None):
     if not site:
         frappe.throw("Please select a Site before uploading the Excel file.")
 
@@ -81,6 +135,9 @@ def validate_excel_site_id(file_name, site):
             f"but the uploaded Excel file belongs to Site ID {file_site_id}. "
             "Please upload the correct Excel file."
         )
+
+    if file_path:
+        validate_progress_data_content(file_path)
 
     return file_site_id
 
@@ -121,7 +178,7 @@ def workbook_has_image(file_path):
         return False
 
 
-def validate_org_chart_file(file_path, site):
+def validate_org_chart_file(file_path, site, file_name=None):
     if not site:
         frappe.throw("Please select a Site before uploading the Organization Chart file.")
 
@@ -140,6 +197,10 @@ def validate_org_chart_file(file_path, site):
             if normalize_site(s.name) == file_site_norm:
                 site_ok = str(s.site_id or "").strip() == str(selected_site_id).strip()
                 break
+    elif file_name:
+        file_site_id = extract_site_id_from_filename(file_name)
+        if file_site_id:
+            site_ok = str(file_site_id).strip() == str(selected_site_id).strip()
 
     image_ok = workbook_has_image(file_path)
 
@@ -179,9 +240,13 @@ def validate_site_id(upload_doc=None, file_url=None, site=None):
             except Exception:
                 frappe.throw("Unable to locate uploaded data file.")
             if fieldname == "organization_chart_upload":
-                validate_org_chart_file(file_doc.get_full_path(), site)
+                validate_org_chart_file(
+                    file_doc.get_full_path(), site, file_doc.file_name
+                )
             else:
-                file_site_id = validate_excel_site_id(file_doc.file_name, site)
+                file_site_id = validate_excel_site_id(
+                    file_doc.file_name, site, file_doc.get_full_path()
+                )
         failed_url = None
     except Exception as e:
         frappe.clear_messages()
@@ -207,7 +272,7 @@ def validate_org_chart(upload_doc=None, file_url=None, site=None):
             file_doc = frappe.get_doc("File", {"file_url": file_url})
         except Exception:
             frappe.throw("Unable to locate uploaded Organization Chart file.")
-        validate_org_chart_file(file_doc.get_full_path(), site)
+        validate_org_chart_file(file_doc.get_full_path(), site, file_doc.file_name)
     except Exception as e:
         frappe.clear_messages()
         return {"status": "error", "message": str(e), "file_url": file_url}
@@ -237,7 +302,7 @@ def import_monthly_progress(upload_doc):
         except Exception:
             frappe.throw("Unable to locate uploaded data file.")
 
-        validate_excel_site_id(file_doc.file_name, site)
+        validate_excel_site_id(file_doc.file_name, site, file_path)
 
         try:
             excel_file = pd.ExcelFile(file_path)
@@ -253,7 +318,7 @@ def import_monthly_progress(upload_doc):
         except Exception:
             frappe.throw("Unable to locate uploaded Organization Chart file.")
 
-        validate_org_chart_file(org_file_path, site)
+        validate_org_chart_file(org_file_path, site, org_file_doc.file_name)
 
     existing = frappe.db.sql("""
         SELECT name

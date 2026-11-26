@@ -3,8 +3,8 @@
 
 function show_site_id_error(frm, message, fieldname) {
     frappe.msgprint({
-        title: __("Site ID Validation Failed"),
-        message: __(message || "Site ID validation failed."),
+        title: __("File Validation Failed"),
+        message: __(message || "File validation failed."),
         indicator: "red",
         clear: true
     });
@@ -61,7 +61,7 @@ function validate_attached_file(frm, fieldname) {
             site: frm.doc.select_site
         },
         freeze: true,
-        freeze_message: __("Validating Site ID..."),
+        freeze_message: __("Validating File..."),
         callback(r) {
             if (r.message && r.message.status === "success") {
                 frappe.show_alert({
